@@ -4,10 +4,10 @@ describe UUIDTools::UUID do
   let(:input) { "e4618518-cb9f-11e1-aa7c-14dae903e06a" }
   let(:hex) { input.delete("-").upcase }
   let(:uuid) { described_class.parse input }
+  let(:sql_out) { "x'e4618518cb9f11e1aa7c14dae903e06a'" }
 
   context "instance methods" do
     subject { uuid }
-    let(:sql_out) { "x'e4618518cb9f11e1aa7c14dae903e06a'" }
 
     its(:quoted_id) { should == sql_out }
     its(:as_json) { should == uuid.to_s }
