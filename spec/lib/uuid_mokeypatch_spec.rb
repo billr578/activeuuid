@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe UUIDTools::UUID do
   let(:input) { "e4618518-cb9f-11e1-aa7c-14dae903e06a" }
-  let(:hex) { "E4618518CB9F11E1AA7C14DAE903E06A" }
+  let(:hex) { input.delete("-").upcase }
   let(:uuid) { described_class.parse input }
 
   context "instance methods" do
