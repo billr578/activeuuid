@@ -1,6 +1,8 @@
 require "rubygems"
 require "bundler/setup"
 
+require "pry"
+
 Bundler.require :development
 
 require "active_record"

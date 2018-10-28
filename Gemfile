@@ -4,3 +4,4 @@ source "http://rubygems.org"
 gemspec
 gem "activerecord", "~>5.0"
 gem "rake", "< 11.0"
+gem 'pry'
