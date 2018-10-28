@@ -21,6 +21,10 @@ module UUIDTools
       "x'#{s}'"
     end
 
+    def value_for_database
+      ActiveRecord::Type::Binary::Data.new(raw)
+    end
+
     def as_json(_options = nil)
       to_s
     end
