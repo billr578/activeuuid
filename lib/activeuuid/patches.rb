@@ -120,7 +120,7 @@ module ActiveUUID
 
       def self.prepended(_klass)
         def quote(value, column = nil)
-          value = UUIDTools::UUID.serialize(value) if column&.type == :uuid
+          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
           case method(__method__).super_method.arity
           when 1 then super(value)
           else super
@@ -128,7 +128,7 @@ module ActiveUUID
         end
 
         def type_cast(value, column = nil)
-          value = UUIDTools::UUID.serialize(value) if column&.type == :uuid
+          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
           super
         end
 
@@ -143,7 +143,7 @@ module ActiveUUID
 
       def self.prepended(_klass)
         def quote(value, column = nil)
-          value = UUIDTools::UUID.serialize(value) if column&.type == :uuid
+          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
           value = value.to_s if value.is_a? UUIDTools::UUID
           case method(__method__).super_method.arity
           when 1 then super(value)
@@ -152,7 +152,7 @@ module ActiveUUID
         end
 
         def type_cast(value, column = nil, *args)
-          value = UUIDTools::UUID.serialize(value) if column&.type == :uuid
+          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
           value = value.to_s if value.is_a? UUIDTools::UUID
           super
         end
