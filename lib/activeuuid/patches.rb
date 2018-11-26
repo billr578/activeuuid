@@ -120,10 +120,13 @@ module ActiveUUID
 
       def self.prepended(_klass)
         def quote(value, column = nil)
-          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
-          case method(__method__).super_method.arity
-          when 1 then super(value)
-          else super
+          # silence quoted_id warning until rails 5.2 (Must fix before rails 5.2)
+          ActiveSupport::Deprecation.silence do
+            value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
+            case method(__method__).super_method.arity
+            when 1 then super(value)
+            else super
+            end
           end
         end
 
