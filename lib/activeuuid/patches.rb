@@ -15,6 +15,11 @@ if (ActiveRecord::VERSION::MAJOR == 4 && ActiveRecord::VERSION::MINOR == 2) ||
           UUIDTools::UUID.serialize(value)
         end
 
+        def deserialize(value)
+          return if value.nil?
+          UUIDTools::UUID.deserialize(value)
+        end
+
         def cast_value(value)
           UUIDTools::UUID.serialize(value)
         end
@@ -132,6 +137,9 @@ module ActiveUUID
 
         def type_cast(value, column = nil)
           value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
+          #if column.try(:type) == :uuid
+          #  binding.pry if value.is_a?(UUIDTools::UUID)
+          #end
           super
         end
 
