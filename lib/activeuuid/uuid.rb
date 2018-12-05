@@ -16,11 +16,6 @@ module UUIDTools
       self.class.random_create
     end
 
-    #def quoted_id
-    #  s = raw.unpack("H*")[0]
-    #  "x'#{s}'"
-    #end
-
     def as_json(_options = nil)
       to_s
     end
@@ -34,7 +29,8 @@ module UUIDTools
     end
 
     def deserialize
-      UUIDTools::UUID.deserialize(self)
+      s = raw.unpack("H*")[0]
+      "x'#{s}'"
     end
 
     def self.serialize(value)
@@ -43,16 +39,6 @@ module UUIDTools
         value
       when String
         parse_string value
-      end
-    end
-
-    def self.deserialize(value)
-      case value
-      when self
-        s = value.raw.unpack("H*")[0]
-        "x'#{s}'"
-      when String
-        value
       end
     end
 
@@ -79,25 +65,25 @@ module Arel
   module Visitors
     class DepthFirst < Arel::Visitors::Visitor
       def visit_UUIDTools_UUID(o, _a = nil)
-        UUIDTools.deserialize(o)
+        o.deserialize
       end
     end
 
     class MySQL < Arel::Visitors::ToSql
       def visit_UUIDTools_UUID(o, _a = nil)
-        UUIDTools.deserialize(o)
+        o.deserialize
       end
     end
 
     class WhereSql < Arel::Visitors::ToSql
       def visit_UUIDTools_UUID(o)
-        UUIDTools.deserialize(o)
+        o.deserialize
       end
     end
 
     class SQLite < Arel::Visitors::ToSql
       def visit_UUIDTools_UUID(o, _a = nil)
-        UUIDTools.deserialize(o)
+        o.deserialize
       end
     end
 

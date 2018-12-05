@@ -120,14 +120,14 @@ module ActiveUUID
 
       def self.prepended(_klass)
         def quote(value, column = nil)
-          # silence quoted_id warning until rails 5.2 (Must fix before rails 5.2)
-          ActiveSupport::Deprecation.silence do
-            if value.respond_to?(:value_for_database)
-              value = value.value_for_database
-            end
-            value = UUIDTools::UUID.serialize(value).to_s if column.try(:type) == :uuid    #column&.type == :uuid
-            value = UUIDTools::UUID.serialize(value).to_s if value.is_a?(UUIDTools::UUID)
-            super(value)
+          if value.respond_to?(:value_for_database)
+            value = value.value_for_database
+          end
+          value = UUIDTools::UUID.serialize(value).to_s if column.try(:type) == :uuid    #column&.type == :uuid
+          value = UUIDTools::UUID.serialize(value).to_s if value.is_a?(UUIDTools::UUID)
+          case method(__method__).super_method.arity
+          when 1 then super(value)
+          else super
           end
         end
 
