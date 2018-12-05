@@ -29,6 +29,14 @@ module UUIDTools
       to_s
     end
 
+    def serialize
+      UUIDTools::UUID.serialize(self)
+    end
+
+    def deserialize
+      UUIDTools::UUID.deserialize(self)
+    end
+
     def self.serialize(value)
       case value
       when self
