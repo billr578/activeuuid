@@ -16,21 +16,17 @@ module UUIDTools
       self.class.random_create
     end
 
+    def deserialize
+      s = raw.unpack("H*")[0]
+      "x'#{s}'"
+    end
+
     def as_json(_options = nil)
       to_s
     end
 
     def to_param
       to_s
-    end
-
-    def serialize
-      UUIDTools::UUID.serialize(self)
-    end
-
-    def deserialize
-      s = raw.unpack("H*")[0]
-      "x'#{s}'"
     end
 
     def self.serialize(value)

@@ -123,8 +123,18 @@ module ActiveUUID
           if value.respond_to?(:value_for_database)
             value = value.value_for_database
           end
-          value = UUIDTools::UUID.serialize(value).to_s if column.try(:type) == :uuid    #column&.type == :uuid
-          value = UUIDTools::UUID.serialize(value).to_s if value.is_a?(UUIDTools::UUID)
+
+          # quoted_id is gone in Rails 5.2 so deserialize which is what it basically did
+          value = value.try(:deserialize) if value.is_a?(UUIDTools::UUID)
+
+          #
+          # TODO : Fix the fact that a value gets sent to MySQL like this:
+          # 'x\'20a478d8d1904405b99901178beacd0a\''
+          # when it should really be:
+          # x'0920b83446104aee89c4254144d20ed5'
+          # Something in the quoting process in AR is escaping or requoting the value
+          #
+
           case method(__method__).super_method.arity
           when 1 then super(value)
           else super
@@ -132,8 +142,8 @@ module ActiveUUID
         end
 
         def type_cast(value, column = nil)
-          value = UUIDTools::UUID.serialize(value).to_s if column.try(:type) == :uuid      #column&.type == :uuid
-          value = UUIDTools::UUID.serialize(value).to_s if value.is_a?(UUIDTools::UUID)
+          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid      #column&.type == :uuid
+          value = UUIDTools::UUID.serialize(value) if value.is_a?(UUIDTools::UUID)
           super(value, column)
         end
 
