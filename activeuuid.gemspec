@@ -24,6 +24,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", "~> 3.5.0"
   s.add_development_dependency "rspec-its"
+  s.add_development_dependency "pry"
+  s.add_development_dependency "pry-byebug"
 
   if RUBY_ENGINE == "jruby"
     s.add_development_dependency "activerecord-jdbcmysql-adapter"
@@ -35,6 +37,6 @@ Gem::Specification.new do |s|
     s.add_development_dependency "sqlite3"
   end
 
-  s.add_runtime_dependency "activerecord", ">= 4.0", "< 5.2"
+  s.add_runtime_dependency "activerecord", ">= 4.0"
   s.add_runtime_dependency "uuidtools"
 end

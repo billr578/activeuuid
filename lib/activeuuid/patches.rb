@@ -120,18 +120,32 @@ module ActiveUUID
 
       def self.prepended(_klass)
         def quote(value, column = nil)
-          # silence quoted_id warning until rails 5.2 (Must fix before rails 5.2)
-          ActiveSupport::Deprecation.silence do
-            value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
-            case method(__method__).super_method.arity
-            when 1 then super(value)
-            else super
-            end
+          if value.respond_to?(:value_for_database)
+            value = value.value_for_database
           end
+
+          # quoted_id is gone in Rails 5.2 so deserialize which is what it basically did.  Just
+          # return the deserialized value.  See line ~22 in Rails 5.1 stable branch:
+          #
+          # https://github.com/rails/rails/blob/5-1-stable/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb
+          if value.is_a?(UUIDTools::UUID)
+            return value.deserialize
+          end
+          super(value)
         end
 
         def type_cast(value, column = nil)
-          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
+          if value.respond_to?(:value_for_database)
+            value = value.value_for_database
+          end
+
+          # quoted_id is gone in Rails 5.2 so deserialize which is what it basically did.  Just
+          # return the deserialized value.  See line ~22 in Rails 5.1 stable branch:
+          #
+          # https://github.com/rails/rails/blob/5-1-stable/activerecord/lib/active_record/connection_adapters/abstract/quoting.rb
+          if value.is_a?(UUIDTools::UUID)
+            return value.id
+          end
           super
         end
 
@@ -146,7 +160,7 @@ module ActiveUUID
 
       def self.prepended(_klass)
         def quote(value, column = nil)
-          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
+          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid        #column&.type == :uuid
           value = value.to_s if value.is_a? UUIDTools::UUID
           case method(__method__).super_method.arity
           when 1 then super(value)
@@ -155,7 +169,7 @@ module ActiveUUID
         end
 
         def type_cast(value, column = nil, *args)
-          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid#column&.type == :uuid
+          value = UUIDTools::UUID.serialize(value) if column.try(:type) == :uuid        #column&.type == :uuid
           value = value.to_s if value.is_a? UUIDTools::UUID
           super
         end
